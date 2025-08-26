@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Cargo VNA POC Survey</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Screen 1: Select Flight -->
+        <div id="selectFlightScreen">
+            <!-- 1. Booking Section -->
+            <div class="mb-8">
+                <h2 class="section-title">1. Booking</h2>
+                <div class="mb-4 grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                    <div>
+                        <label for="sector" class="block text-sm font-medium text-gray-700 mb-1">Sector:</label>
+                        <input type="text" id="sector" class="input-field" placeholder="Enter Sector">
+                    </div>
+                    <div>
+                        <label for="flightNumber" class="block text-sm font-medium text-gray-700 mb-1">Flight number:</label>
+                        <input type="text" id="flightNumber" class="input-field" placeholder="Enter Flight Number">
+                    </div>
+                    <div>
+                        <label for="departDate" class="block text-sm font-medium text-gray-700 mb-1">Depart Date:</label>
+                        <input type="date" id="departDate" class="input-field">
+                    </div>
+                </div>
+                <button id="searchBtn" class="btn btn-primary mb-6">Search</button>
+
+                <h3 class="font-semibold text-lg text-gray-800 mb-3">Flight list (Select one flight)</h3>
+                <div class="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
+                    <table id="flightListTable" class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-blue-50">
+                            <tr>
+                                <th class="py-3 px-6">Select</th>
+                                <th class="py-3 px-6">Flight number</th>
+                                <th class="py-3 px-6">Sector</th>
+                                <th class="py-3 px-6">Depart date</th>
+                                <th class="py-3 px-6">Aircraft type</th>
+                                <th class="py-3 px-6">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <!-- Flight list rows will be inserted here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <!-- This div is where JavaScript will insert the interactive pagination links -->
+                <div id="flightListPagination" class="flex justify-end items-center gap-2 mt-4 text-sm text-gray-500">
+                    <!-- Pagination links will be inserted here by JavaScript -->
+                </div>
+                <button id="selectFlightSubmitBtn" class="btn btn-primary w-full mt-6">View Selected Flight</button>
+            </div>
+        </div>
+
+        <!-- Screen 2: Booking Details (Initially hidden) -->
+        <div id="bookingDetailsScreen" class="hidden">
+            <button id="backToFlightSelectionBtn" class="btn btn-primary mb-6">← Back to Flight Selection</button>
+            <h2 class="section-title mb-4">Bookings for Flight: <span id="selectedFlightDisplay" class="font-bold text-blue-700"></span></h2>
+
+            <!-- Allotment and Total sections moved to the top -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="md:col-span-1">
+                    <div class="sidebar mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Allotment</h4>
+                        <div class="sidebar-item">
+                            <span>VNA</span>
+                            <span class="font-medium">80%</span>
+                            <select class="status-dropdown w-24 ml-2">
+                                <option>✔</option>
+                                <option>✖</option>
+                            </select>
+                        </div>
+                        <div class="sidebar-item">
+                            <span>NRI</span>
+                            <span class="font-medium">65%</span>
+                            <select class="status-dropdown w-24 ml-2">
+                                <option>✔</option>
+                                <option>✖</option>
+                            </select>
+                        </div>
+                        <div class="sidebar-item">
+                            <span>Other</span>
+                            <span class="font-medium">30%</span>
+                            <select class="status-dropdown w-24 ml-2">
+                                <option>✔</option>
+                                <option>✖</option>
+                            </select>
+                        </div>
+                        <div class="sidebar-item">
+                            <span>Freesale</span>
+                            <span class="font-medium">20%</span>
+                            <select class="status-dropdown w-24 ml-2">
+                                <option>✔</option>
+                                <option>✖</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:col-span-2">
+                    <div class="sidebar">
+                        <h4 class="font-semibold text-gray-800 mb-2">Total</h4>
+                        <div class="sidebar-item">
+                            <span>W</span>
+                            <span id="totalW" class="font-medium">0</span>
+                        </div>
+                        <div class="sidebar-item">
+                            <span>V</span>
+                            <span id="totalV" class="font-medium">0</span>
+                        </div>
+                        <div class="sidebar-item">
+                            <span>CPN</span>
+                            <span id="totalCPN" class="font-medium">0</span>
+                        </div>
+                        <div class="sidebar-item">
+                            <span>ST</span>
+                            <span id="totalST" class="font-medium">0</span>
+                        </div>
+                        <div class="sidebar-item">
+                            <span>Remain</span>
+                            <span id="totalRemai" class="font-medium">0</span>
+                        </div>
+                        <div class="sidebar-item font-bold text-gray-900">
+                            <span>Total revenue</span>
+                            <span id="totalRevenue" class="text-green-600">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-8 border-gray-300">
+
+            <!-- 3. Standby Booking List Section -->
+            <div>
+                <h2 class="section-title">Standby Booking List</h2>
+                <div class="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
+                    <table id="standbyBookingTable" class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-blue-50">
+                            <tr>
+                                <th class="py-3 px-6">Select</th>
+                                <th class="py-3 px-6">Status</th>
+                                <th class="py-3 px-6">Station</th>
+                                <th class="py-3 px-6">AWB</th>
+                                <th class="py-3 px-6">Ori</th>
+                                <th class="py-3 px-6">Des</th>
+                                <th class="py-3 px-6">Pieces</th>
+                                <th class="py-3 px-6">DIM</th>
+                                <th class="py-3 px-6">CW</th>
+                                <th class="py-3 px-6">GW</th>
+                                <th class="py-3 px-6">VOL</th>
+                                <th class="py-3 px-6">Price</th>
+                                <th class="py-3 px-6">Revenue</th>
+                                <th class="py-3 px-6">CWP</th>
+                                <th class="py-3 px-6">Position</th>
+                                <th class="py-3 px-6">Rev/loss</th>
+                                <th class="py-3 px-6">Allotment</th>
+                                <th class="py-3 px-6">Agent</th>
+                                <th class="py-3 px-6">Nature good</th>
+                                <th class="py-3 px-6">Alott</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <!-- Standby booking rows will be inserted here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <hr class="my-8 border-gray-300">
+
+            <!-- Buttons between sections -->
+            <div class="flex items-center justify-center gap-4 my-8">
+                <button id="addBookingBtn" class="flex items-center justify-center p-3 bg-blue-500 hover:bg-blue-600 text-white rounded-full shadow-lg transition duration-200">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
+                </button>
+                <button id="removeBookingBtn" class="flex items-center justify-center p-3 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg transition duration-200">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
+                </button>
+            </div>
+
+            <hr class="my-8 border-gray-300">
+
+            <!-- 2. Confirm Booking List Section -->
+            <div class="mb-8">
+                <h2 class="section-title">Confirm Booking list</h2>
+                <!-- Removed the grid and column classes from this div -->
+                <div class="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
+                    <table id="confirmBookingTable" class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-blue-50">
+                            <tr>
+                                <th class="py-3 px-6">Select</th>
+                                <th class="py-3 px-6">Status</th>
+                                <th class="py-3 px-6">Station</th>
+                                <th class="py-3 px-6">AWB</th>
+                                <th class="py-3 px-6">Ori</th>
+                                <th class="py-3 px-6">Des</th>
+                                <th class="py-3 px-6">Pieces</th>
+                                <th class="py-3 px-6">DIM</th>
+                                <th class="py-3 px-6">CW</th>
+                                <th class="py-3 px-6">GW</th>
+                                <th class="py-3 px-6">VOL</th>
+                                <th class="py-3 px-6">Price</th>
+                                <th class="py-3 px-6">Revenue</th>
+                                <th class="py-3 px-6">CWP</th>
+                                <th class="py-3 px-6">Position</th>
+                                <th class="py-3 px-6">Rev/loss</th>
+                                <th class="py-3 px-6">Allotment</th>
+                                <th class="py-3 px-6">Agent</th>
+                                <th class="py-3 px-6">Nature good</th>
+                                <th class="py-3 px-6">Alott</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <!-- Confirm booking rows will be inserted here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <button class="btn btn-primary w-full mt-6">Submit</button>
+        </div>
+    </div>
+
+    <!-- Link to external JavaScript file -->
+    <script src="script.js"></script>
+</body>
+</html>
