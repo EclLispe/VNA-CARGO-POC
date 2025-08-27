@@ -48,7 +48,6 @@ def load_csv_data():
             df_allocation = df_allocation.iloc[:, :15]
             
             # Clean up column names to be more JavaScript-friendly (camelCase)
-            # This mapping should be carefully checked against your actual CSV header
             # Based on the CSV content provided, the header seems to be:
             # STS,DEST,Month,Flight No,Phân thị,Sector,A/C,Dow,Vị trí phân bổ,AC type,CW/ vị trí,Total CW,Net Rate ($),All in,Revenue
             # Let's map these to more JS-friendly names
